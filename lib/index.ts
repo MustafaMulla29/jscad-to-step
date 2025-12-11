@@ -1,14 +1,26 @@
-import type { JscadOperation } from "jscad-planner"
+import type { JscadOperation, CubeOperation } from "jscad-planner"
+import { convertCubeToStep } from "./converters/cube-converter"
 
 /**
  * Convert a jscad-planner operation to STEP format.
  *
- * Currently stubbed to return a simple cube STEP file.
- * TODO: Implement actual jscad → STEP conversion
+ * @param operation - The jscad-planner operation to convert
+ * @returns STEP file content as string
  */
 export function jscadToStep(operation: JscadOperation): string {
-  // For now, return a hardcoded simple cube STEP file
-  // This is a valid STEP file representing a 10x10x10 cube
+  // Detect operation type and convert accordingly
+  if (operation.type === "cube") {
+    return convertCubeToStep(operation as CubeOperation)
+  }
+
+  // Fallback for unsupported operations
+  throw new Error(
+    `Unsupported jscad operation type: ${(operation as any).type || "unknown"}`,
+  )
+}
+
+// For backwards compatibility during development, keep the old stub
+function _generateHardcodedCubeStep(): string {
   return `ISO-10303-21;
 HEADER;
 FILE_DESCRIPTION(('jscad-to-step cube'),'2;1');
